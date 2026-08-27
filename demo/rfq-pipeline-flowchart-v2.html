@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meridian RFQ Pipeline — Process Flowchart</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@600;700;800&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy:    #1a5fb4;
+  --navy2:   #2471d4;
+  --blue:    #1a5fb4;
+  --blue2:   #2471d4;
+  --teal:    #0d7377;
+  --teal2:   #14a98e;
+  --amber:   #c07800;
+  --amber2:  #e8960a;
+  --pink:    #9a2463;
+  --pink2:   #c4387e;
+  --purple:  #5535a8;
+  --purple2: #7555cc;
+  --orange:  #c2410c;
+  --orange2: #ea580c;
+  --gray:    #94a3b8;
+  --gray2:   #64748b;
+  --gold:    #b45309;
+  --bg:      #f0f4f8;
+  --bg2:     #e2e8f0;
+  --bg3:     #dde3ea;
+  --line:    #94a3b8;
+  --text:    #1e293b;
+  --muted:   #475569;
+  --white:   #1e293b;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  font-family: 'Inter', sans-serif;
+  color: var(--text);
+  min-height: 100vh;
+  padding: 48px 32px 80px;
+}
+
+/* ── Page header ── */
+.page-header {
+  text-align: center;
+  margin-bottom: 52px;
+}
+.page-header .eyebrow {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 3px;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.page-header h1 {
+  font-family: 'Syne', sans-serif;
+  font-size: 36px;
+  font-weight: 800;
+  color: var(--white);
+  letter-spacing: -0.5px;
+  line-height: 1.1;
+  margin-bottom: 12px;
+}
+.page-header h1 span { color: var(--blue2); }
+.page-header p {
+  font-size: 14px;
+  color: var(--muted);
+  max-width: 560px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* ── Legend ── */
+.legend {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 48px;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  color: var(--muted);
+  font-family: 'DM Mono', monospace;
+}
+.legend-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+/* ── Pipeline container ── */
+.pipeline {
+  max-width: 860px;
+  margin: 0 auto;
+  position: relative;
+}
+
+/* Vertical spine */
+.pipeline::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: linear-gradient(to bottom,
+    transparent 0%, var(--line) 5%, var(--line) 95%, transparent 100%);
+  transform: translateX(-0.5px);
+  z-index: 0;
+}
+
+/* ── Phase label ── */
+.phase-label {
+  text-align: center;
+  margin: 32px 0 16px;
+  position: relative;
+  z-index: 1;
+}
+.phase-label span {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: var(--bg);
+  padding: 0 16px;
+}
+
+/* ── Node card ── */
+.node {
+  position: relative;
+  z-index: 1;
+  margin: 0 auto 6px;
+  border-radius: 10px;
+  padding: 14px 20px;
+  border: 1px solid transparent;
+  transition: transform .15s, box-shadow .15s;
+}
+.node:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,.12);
+}
+.node .label {
+  font-family: 'Syne', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 3px;
+  letter-spacing: .1px;
+}
+.node .sublabel {
+  font-size: 11.5px;
+  line-height: 1.45;
+  opacity: .78;
+  font-family: 'Inter', sans-serif;
+}
+
+/* ── Node colour themes ── */
+.node-orchestrator {
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+  border-color: var(--blue);
+  max-width: 480px;
+}
+.node-orchestrator .label { color: #1e40af; }
+.node-orchestrator .sublabel { color: #2563eb; }
+
+.node-skill {
+  background: linear-gradient(135deg, #ccfbf1 0%, #99f6e4 100%);
+  border-color: var(--teal);
+  max-width: 560px;
+}
+.node-skill .label { color: #0f766e; }
+.node-skill .sublabel { color: #0d9488; }
+
+.node-external {
+  background: linear-gradient(135deg, #fef9c3 0%, #fef08a 100%);
+  border-color: var(--amber);
+  max-width: 440px;
+}
+.node-external .label { color: #92400e; }
+.node-external .sublabel { color: #b45309; }
+
+.node-user {
+  background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%);
+  border-color: var(--pink);
+  max-width: 440px;
+}
+.node-user .label { color: #9d174d; }
+.node-user .sublabel { color: #be185d; }
+
+.node-report {
+  background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%);
+  border-color: var(--purple);
+  max-width: 480px;
+}
+.node-report .label { color: #4c1d95; }
+.node-report .sublabel { color: #6d28d9; }
+
+.node-disruption {
+  background: linear-gradient(135deg, #fff7ed 0%, #fed7aa 100%);
+  border-color: var(--orange);
+  max-width: 560px;
+}
+.node-disruption .label { color: #7c2d12; }
+.node-disruption .sublabel { color: #c2410c; }
+
+.node-end {
+  background: var(--bg3);
+  border-color: var(--gray2);
+  max-width: 240px;
+  text-align: center;
+}
+.node-end .label { color: #1e293b; font-size: 16px; }
+
+/* ── Arrow connector ── */
+.arrow {
+  display: flex;
+  justify-content: center;
+  margin: 2px 0;
+  position: relative;
+  z-index: 1;
+}
+.arrow-line {
+  width: 1px;
+  height: 22px;
+  background: var(--line);
+  position: relative;
+}
+.arrow-line::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 7px solid var(--line);
+}
+.arrow-line.gold { background: var(--gold); }
+.arrow-line.gold::after { border-top-color: var(--gold); }
+.arrow-line.orange { background: var(--orange); }
+.arrow-line.orange::after { border-top-color: var(--orange); }
+.side-connector.orange { background: var(--orange); }
+
+/* ── Parallel columns (Phase 3) ── */
+.parallel-block {
+  display: flex;
+  gap: 14px;
+  align-items: stretch;
+  margin-bottom: 10px;
+}
+.parallel-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.parallel-divider {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 4px;
+  padding: 4px 0;
+}
+.parallel-divider span {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  color: var(--muted);
+  letter-spacing: 1px;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  transform: rotate(180deg);
+}
+.parallel-divider::before,
+.parallel-divider::after {
+  content: '';
+  flex: 1;
+  width: 1px;
+  background: var(--line);
+}
+
+/* ── Branch layout ── */
+.branch {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  position: relative;
+  z-index: 1;
+  margin-bottom: 6px;
+}
+.branch-col {
+  flex: 1;
+  max-width: 360px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.branch-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+}
+
+/* Branch connector line (horizontal top) */
+.branch-connector {
+  position: relative;
+  height: 24px;
+  z-index: 1;
+  margin-bottom: 4px;
+}
+.branch-connector::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 25%;
+  right: 25%;
+  height: 1px;
+  background: var(--line);
+}
+.branch-connector::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-0.5px);
+  width: 1px;
+  height: 24px;
+  background: var(--line);
+}
+
+/* Merge line (converge from two cols) */
+.merge {
+  position: relative;
+  height: 28px;
+  z-index: 1;
+  margin-bottom: 4px;
+}
+.merge::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 25%;
+  right: 25%;
+  height: 1px;
+  background: var(--line);
+}
+.merge::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-0.5px);
+  width: 1px;
+  height: 28px;
+  background: var(--line);
+}
+
+.branch-col .arrow { margin: 0; }
+
+/* ── Async badge ── */
+.async-wrap {
+  border: 1px dashed #64748b;
+  border-radius: 12px;
+  padding: 16px;
+  margin: 0 auto 6px;
+  max-width: 640px;
+  position: relative;
+  z-index: 1;
+}
+.async-badge {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: var(--muted);
+  text-transform: uppercase;
+  text-align: right;
+  margin-bottom: 10px;
+}
+
+/* ── Decision diamond ── */
+.diamond-wrap {
+  display: flex;
+  justify-content: center;
+  margin: 4px 0;
+  position: relative;
+  z-index: 1;
+}
+.diamond {
+  background: var(--bg3);
+  border: 1px solid var(--line);
+  transform: rotate(45deg);
+  width: 110px;
+  height: 110px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+}
+.diamond-inner {
+  transform: rotate(-45deg);
+  text-align: center;
+  padding: 8px;
+}
+.diamond-inner .label {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: .5px;
+  line-height: 1.4;
+}
+
+/* Loop-back label */
+.loop-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  text-align: center;
+  margin: 2px 0 10px;
+  letter-spacing: 1px;
+}
+
+/* ── Side annotations ── */
+.node-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: center;
+  position: relative;
+  z-index: 1;
+  margin-bottom: 6px;
+}
+.side-tag {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  background: var(--bg2);
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  padding: 4px 8px;
+  white-space: nowrap;
+  line-height: 1.4;
+}
+.side-tag.right { text-align: left; }
+.side-tag.left  { text-align: right; }
+.side-connector {
+  width: 28px;
+  height: 1px;
+  background: var(--line);
+  flex-shrink: 0;
+}
+
+/* ── Footer ── */
+.footer {
+  text-align: center;
+  margin-top: 60px;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 1px;
+}
+</style>
+</head>
+<body>
+
+<!-- ── Page header ── -->
+<div class="page-header">
+  <div class="eyebrow">Meridian Industrial Systems — Hermes Automation</div>
+  <h1>RFQ Pipeline <span>Process Flow</span></h1>
+  <p>End-to-end procurement automation from work order trigger to HTML/PDF shortlist report. Seven Hermes skills, five phases — with live supply chain disruption monitoring and automatic re-evaluation.</p>
+</div>
+
+<!-- ── Legend ── -->
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:#bfdbfe;border:1px solid #1a5fb4"></div>Orchestrator</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#99f6e4;border:1px solid #0d7377"></div>Sub-skill</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#fed7aa;border:1px solid #c2410c"></div>Disruption monitor</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#fef08a;border:1px solid #c07800"></div>External system</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#fbcfe8;border:1px solid #9a2463"></div>User / Telegram</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#ddd6fe;border:1px solid #5535a8"></div>Report output</div>
+  <div class="legend-item"><div class="legend-dot" style="border:1px dashed #64748b;background:transparent"></div>Async / cron</div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PHASE 0
+══════════════════════════════════════════ -->
+<div class="pipeline">
+
+  <div class="phase-label"><span>Phase 0 — trigger &amp; parse</span></div>
+
+  <!-- User trigger -->
+  <div class="node node-user" style="max-width:420px;margin:0 auto 6px;">
+    <div class="label">User sends message on Telegram</div>
+    <div class="sublabel">Attach Excel (.xlsx) or PDF — or type "start RFQ for WO-2024-NNNN"</div>
+  </div>
+  <div class="arrow"><div class="arrow-line"></div></div>
+
+  <!-- Orchestrator auth + detect -->
+  <div class="node node-orchestrator">
+    <div class="label">rfq-orchestrator — auth check &amp; input detection</div>
+    <div class="sublabel">Verifies Google Workspace auth · Detects file vs text trigger · Intercepts /re-evaluate to skip straight to Phase 4</div>
+  </div>
+
+  <!-- Branch -->
+  <div class="branch-connector"></div>
+  <div class="branch">
+    <div class="branch-col">
+      <div class="branch-label">FILE PATH</div>
+      <div class="node node-external" style="max-width:100%;width:100%;">
+        <div class="label">Parse file</div>
+        <div class="sublabel">Excel → openpyxl label scan<br>PDF → pdfplumber + LLM extraction<br>Scanned PDF → pytesseract OCR fallback</div>
+      </div>
+    </div>
+    <div class="branch-col">
+      <div class="branch-label">TEXT PATH</div>
+      <div class="node node-external" style="max-width:100%;width:100%;">
+        <div class="label">Look up WorkOrders sheet</div>
+        <div class="sublabel">Match WO-YYYY-NNNN pattern<br>Load existing record + line items<br>Ask user for any missing fields</div>
+      </div>
+    </div>
+  </div>
+  <div class="merge"></div>
+
+  <!-- Confirm -->
+  <div class="node node-user" style="max-width:440px;margin:0 auto 6px;">
+    <div class="label">Show parsed summary — confirm with user</div>
+    <div class="sublabel">Displays WO ID, category, budget, all line items · Waits for "yes"</div>
+  </div>
+  <div class="arrow"><div class="arrow-line"></div></div>
+
+  <!-- Save -->
+  <div class="node-row">
+    <div class="side-tag left">WorkOrders tab<br>WorkOrderItems tab</div>
+    <div class="side-connector"></div>
+    <div class="node node-external" style="max-width:360px;flex:1;">
+      <div class="label">Save to Sheets + archive to Drive</div>
+      <div class="sublabel">Duplicate WO/RFQ check before writing · Source file archived</div>
+    </div>
+    <div class="side-connector"></div>
+    <div class="side-tag right">Google Sheets<br>Google Drive</div>
+  </div>
+  <div class="arrow"><div class="arrow-line gold"></div></div>
+
+  <!-- ══════════════════════════════════════════
+       PHASE 1
+  ══════════════════════════════════════════ -->
+  <div class="phase-label"><span>Phase 1 — vendor selection + initial disruption scan</span></div>
+
+  <div class="node-row">
+    <div class="side-tag left">Vendor master<br>Disputes tab</div>
+    <div class="side-connector"></div>
+    <div class="node node-skill" style="flex:1;max-width:480px;">
+      <div class="label">rfq-vendor-selector</div>
+      <div class="sublabel">Reads vendor master · Applies 100-pt scoring model (price / OTD / quality / response rate / relationship) · Excludes high-risk &amp; disputed vendors · Returns top 8 with archetypes</div>
+    </div>
+    <div class="side-connector"></div>
+    <div class="side-tag right">Telegram update<br>8 vendors</div>
+  </div>
+  <div class="arrow"><div class="arrow-line"></div></div>
+
+  <div class="node-row">
+    <div class="side-tag left" style="border-color:var(--orange);color:var(--orange);">Reuters · BBC · FT<br>Weather APIs</div>
+    <div class="side-connector orange"></div>
+    <div class="node node-disruption" style="flex:1;max-width:480px;">
+      <div class="label">rfq-disruption-monitor — initial scan</div>
+      <div class="sublabel">Scans news &amp; weather for vendor regions &amp; category · Classifies signals (port closure / strike / weather / geopolitical / commodity shortage) · Logs baseline to Disruptions tab · Returns pre-existing penalties before emails go out</div>
+    </div>
+    <div class="side-connector orange"></div>
+    <div class="side-tag right" style="border-color:var(--orange);color:var(--orange);">Disruptions tab<br>Penalties logged</div>
+  </div>
+  <div class="arrow"><div class="arrow-line gold"></div></div>
+
+  <!-- ══════════════════════════════════════════
+       PHASE 2
+  ══════════════════════════════════════════ -->
+  <div class="phase-label"><span>Phase 2 — RFQ email dispatch</span></div>
+
+  <div class="node-row">
+    <div class="side-tag left">RFQ spec doc<br>Google Drive</div>
+    <div class="side-connector"></div>
+    <div class="node node-skill" style="flex:1;max-width:480px;">
+      <div class="label">rfq-email-composer</div>
+      <div class="sublabel">Creates RFQ spec doc in Drive · Sends 8 personalised Gmail emails (tone matched to vendor archetype: reliable / conservative / aggressive / relationship-focused / volatile) · Logs Gmail thread IDs · Sets Calendar chase reminder</div>
+    </div>
+    <div class="side-connector"></div>
+    <div class="side-tag right">Gmail (8 emails)<br>EmailLog tab<br>Calendar reminder</div>
+  </div>
+  <div class="arrow"><div class="arrow-line gold"></div></div>
+
+  <!-- ══════════════════════════════════════════
+       PHASE 3
+  ══════════════════════════════════════════ -->
+  <div class="phase-label"><span>Phase 3 — bid monitoring + live disruption monitoring (async)</span></div>
+
+  <div class="async-wrap" style="max-width:760px;">
+    <div class="async-badge">two cron jobs running in parallel</div>
+
+    <div class="parallel-block">
+
+      <!-- Left: bid tracker -->
+      <div class="parallel-col">
+        <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:6px;">every 30 min</div>
+        <div class="node node-skill" style="max-width:100%;margin:0;">
+          <div class="label">rfq-email-tracker</div>
+          <div class="sublabel">Polls Gmail threads · Classifies replies: bid / acknowledgement / query / decline · Extracts bid fields · Updates Bids tab · Sends nudge emails 2 days before deadline</div>
+        </div>
+        <div class="arrow" style="margin:6px 0;"><div class="arrow-line"></div></div>
+        <div class="node node-user" style="max-width:100%;margin:0;">
+          <div class="label">Telegram alert — new bid</div>
+          <div class="sublabel">Vendor · Total (USD) · Lead time · Notes</div>
+        </div>
+        <div class="arrow" style="margin:6px 0;"><div class="arrow-line"></div></div>
+        <div class="diamond-wrap">
+          <div class="diamond">
+            <div class="diamond-inner">
+              <div class="label">Threshold<br>met?</div>
+            </div>
+          </div>
+        </div>
+        <div class="loop-label" style="font-size:9px;">NO → re-poll | YES → /evaluate</div>
+      </div>
+
+      <!-- Divider -->
+      <div class="parallel-divider"><span>PARALLEL</span></div>
+
+      <!-- Right: disruption monitor -->
+      <div class="parallel-col">
+        <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--orange);text-transform:uppercase;margin-bottom:6px;">every hour</div>
+        <div class="node node-disruption" style="max-width:100%;margin:0;">
+          <div class="label">rfq-disruption-monitor</div>
+          <div class="sublabel">Scans Reuters, BBC, FT, Supply Chain Dive, FreightWaves, weather · Detects port closures, strikes, extreme weather, geopolitical events, commodity shortages · Matches disruptions to vendor regions &amp; categories</div>
+        </div>
+        <div class="arrow" style="margin:6px 0;"><div class="arrow-line orange"></div></div>
+        <div class="node node-user" style="max-width:100%;margin:0;border-color:var(--orange);">
+          <div class="label" style="color:#7c2d12;">Telegram disruption alert</div>
+          <div class="sublabel" style="color:#c2410c;">Type · Region · Severity · Affected vendors · Penalty %</div>
+        </div>
+        <div class="arrow" style="margin:6px 0;"><div class="arrow-line orange"></div></div>
+        <div class="node node-external" style="max-width:100%;margin:0;">
+          <div class="label">Write to Disruptions tab</div>
+          <div class="sublabel">disruption_id · type · region · severity · vendor_ids · penalty_pct · status · entered_by</div>
+        </div>
+        <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--orange);text-align:center;margin-top:8px;letter-spacing:1px;">fires /re-evaluate {rfq_id}</div>
+        <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);text-align:center;margin-top:4px;">Manual sheet row → same path</div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="arrow"><div class="arrow-line gold"></div></div>
+
+  <!-- ══════════════════════════════════════════
+       PHASE 4
+  ══════════════════════════════════════════ -->
+  <div class="phase-label"><span>Phase 4 — bid evaluation (standard or re-evaluation)</span></div>
+
+  <div style="text-align:center;margin-bottom:10px;position:relative;z-index:1;">
+    <span style="font-family:'DM Mono',monospace;font-size:10px;background:#fff7ed;border:1px solid var(--orange);border-radius:20px;padding:3px 14px;color:var(--orange);">
+      /re-evaluate bypasses Phases 0–3 and arrives here directly
+    </span>
+  </div>
+
+  <div class="node-row">
+    <div class="side-tag left">Bids tab<br>Vendor master<br><span style="color:var(--orange);font-weight:600;">Disruptions tab</span></div>
+    <div class="side-connector"></div>
+    <div class="node node-skill" style="flex:1;max-width:500px;">
+      <div class="label">rfq-bid-evaluator</div>
+      <div class="sublabel">Loads active disruption penalties · Computes effective_delivery_days = quoted × (1 + penalty%) · Weighted scoring: price 50% · delivery 30% · payment 20% · Flags volatile &amp; aggressive archetypes · On re-eval: detects and reports rank changes vs previous run</div>
+    </div>
+    <div class="side-connector"></div>
+    <div class="side-tag right">BidEvaluation tab<br>Rank changes<br>Telegram table</div>
+  </div>
+  <div class="arrow"><div class="arrow-line gold"></div></div>
+
+  <!-- ══════════════════════════════════════════
+       PHASE 5
+  ══════════════════════════════════════════ -->
+  <div class="phase-label"><span>Phase 5 — shortlist, report &amp; close</span></div>
+
+  <div class="node-row">
+    <div class="side-tag left">BidEvaluation tab</div>
+    <div class="side-connector"></div>
+    <div class="node node-skill" style="flex:1;max-width:480px;">
+      <div class="label">rfq-vendor-finalizer — select top 5</div>
+      <div class="sublabel">Ranks by composite score · Writes numeric justification per vendor (includes disruption penalty notes) · Writes exclusion reason for each dropped bid · Cancels bid &amp; disruption monitor crons</div>
+    </div>
+    <div class="side-connector"></div>
+    <div class="side-tag right">Shortlist tab<br>RFQ marked closed<br>Crons cancelled</div>
+  </div>
+  <div class="arrow"><div class="arrow-line"></div></div>
+
+  <div class="node node-report">
+    <div class="label">Generate HTML report + PDF</div>
+    <div class="sublabel">build_html_report() → styled HTML with score bars, shortlist table, scoring weights, volume split recommendation, next steps checklist · WeasyPrint → PDF (wkhtmltopdf fallback)</div>
+  </div>
+  <div class="arrow"><div class="arrow-line"></div></div>
+
+  <div class="node-row">
+    <div class="side-tag left">RFQ-Summary-*.html<br>RFQ-Summary-*.pdf</div>
+    <div class="side-connector"></div>
+    <div class="node node-external" style="flex:1;max-width:400px;">
+      <div class="label">Upload to Google Drive + share publicly</div>
+      <div class="sublabel">Both files uploaded · Made reader-accessible · Direct download URLs returned</div>
+    </div>
+    <div class="side-connector"></div>
+    <div class="side-tag right">Google Drive<br>download links</div>
+  </div>
+  <div class="arrow"><div class="arrow-line"></div></div>
+
+  <div class="node-row">
+    <div class="side-tag left">Calendar event<br>3 days before delivery</div>
+    <div class="side-connector"></div>
+    <div class="node node-external" style="flex:1;max-width:400px;">
+      <div class="label">Update Sheets + Calendar reminder</div>
+      <div class="sublabel">Shortlist tab appended · RFQEvents row marked "closed" · Delivery follow-up event created</div>
+    </div>
+    <div class="side-connector"></div>
+    <div class="side-tag right">Google Sheets<br>Google Calendar</div>
+  </div>
+  <div class="arrow"><div class="arrow-line gold"></div></div>
+
+  <div class="node node-user" style="max-width:540px;margin:0 auto 6px;">
+    <div class="label">Final Telegram message</div>
+    <div class="sublabel">Shortlisted vendors with scores · HTML report link · PDF report link · Bid log sheet link · Delivery follow-up date</div>
+  </div>
+  <div class="arrow"><div class="arrow-line gold"></div></div>
+
+  <!-- DONE -->
+  <div class="node node-end">
+    <div class="label">✓ RFQ Closed</div>
+  </div>
+
+</div><!-- /.pipeline -->
+
+<div class="footer">
+  Meridian Industrial Systems — Hermes RFQ Orchestration Suite v2.3 &nbsp;·&nbsp; 7 skills &nbsp;·&nbsp; 5 phases &nbsp;·&nbsp; live disruption monitoring
+</div>
+
+</body>
+</html>

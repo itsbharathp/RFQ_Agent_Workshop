@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meridian RFQ Pipeline — Sheet Inventory &amp; ER Diagram</title>
+<style>
+  :root {
+    --bg: #ffffff;
+    --surface: #f7f6f2;
+    --border: #dedcd3;
+    --text: #2c2c2a;
+    --text-muted: #5f5e5a;
+    --accent: #185fa5;
+    --accent-bg: #e6f1fb;
+    --warn-bg: #faeeda;
+    --warn-border: #ef9f27;
+    --warn-text: #633806;
+    --code-bg: #f1efe8;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 0 20px 80px;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+  }
+  .wrap { max-width: 920px; margin: 0 auto; }
+  header {
+    padding: 40px 0 20px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 32px;
+  }
+  h1 { font-size: 26px; font-weight: 600; margin: 0 0 6px; }
+  .subtitle { color: var(--text-muted); font-size: 15px; }
+  h2 {
+    font-size: 19px;
+    font-weight: 600;
+    margin: 40px 0 14px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  h3 { font-size: 15px; font-weight: 600; margin: 22px 0 8px; }
+  p { font-size: 15px; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    margin: 10px 0 20px;
+  }
+  th, td {
+    text-align: left;
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  th { background: var(--surface); font-weight: 600; }
+  code {
+    background: var(--code-bg);
+    padding: 1px 5px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-family: "SF Mono", Consolas, monospace;
+  }
+  .workbook {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 20px;
+    margin-bottom: 18px;
+  }
+  .workbook h3 { margin-top: 0; }
+  .tag {
+    display: inline-block;
+    background: var(--accent-bg);
+    color: var(--accent);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 5px;
+    margin-left: 8px;
+  }
+  #diagram-container {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    overflow-x: auto;
+  }
+  .note {
+    background: var(--warn-bg);
+    border-left: 3px solid var(--warn-border);
+    color: var(--warn-text);
+    padding: 12px 16px;
+    border-radius: 0 6px 6px 0;
+    margin: 12px 0;
+    font-size: 14px;
+  }
+  .note strong { display: block; margin-bottom: 4px; }
+  footer {
+    margin-top: 50px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+    color: var(--text-muted);
+    font-size: 13px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>Meridian RFQ Pipeline — Sheet Inventory &amp; ER Diagram</h1>
+  <div class="subtitle">Data model behind the vendor-selection → RFQ dispatch → bid tracking → evaluation → shortlist pipeline</div>
+</header>
+
+<h2>Sheet inventory</h2>
+<p>Two Google Sheets workbooks power the pipeline, referenced everywhere as
+<code>MERIDIAN_VENDOR_SHEET_ID</code> and <code>MERIDIAN_SHEETS_BID_LOG_ID</code>,
+split across nine tabs.</p>
+
+<div class="workbook">
+  <h3>Workbook 1 — Vendor Master <span class="tag">MERIDIAN_VENDOR_SHEET_ID</span></h3>
+  <table>
+    <tr><th>Tab</th><th>Range</th><th>Purpose</th></tr>
+    <tr><td><code>Vendors</code></td><td>A:R</td><td>Vendor master data — pricing, delivery, quality, risk, relationship history. Read by the selector and the evaluator.</td></tr>
+  </table>
+</div>
+
+<div class="workbook">
+  <h3>Workbook 2 — Bid Log <span class="tag">MERIDIAN_SHEETS_BID_LOG_ID</span></h3>
+  <table>
+    <tr><th>Tab</th><th>Range</th><th>Purpose</th></tr>
+    <tr><td><code>WorkOrders</code></td><td>A:H</td><td>Incoming work orders that trigger an RFQ</td></tr>
+    <tr><td><code>RFQEvents</code></td><td>A:G</td><td>One row per RFQ dispatch event, keyed to a work order</td></tr>
+    <tr><td><code>RFQInvites</code></td><td>A:I</td><td>The 8 vendors selected/invited per RFQ</td></tr>
+    <tr><td><code>EmailLog</code></td><td>A:G</td><td>Gmail thread/message tracking per vendor per RFQ</td></tr>
+    <tr><td><code>Bids</code></td><td>A:N</td><td>Parsed bid data extracted from vendor reply emails</td></tr>
+    <tr><td><code>BidEvaluation</code></td><td>A:N</td><td>Scored/ranked bids per RFQ</td></tr>
+    <tr><td><code>Shortlist</code></td><td>A:L</td><td>Final top-5 vendors per RFQ, with justification</td></tr>
+    <tr><td><code>Disputes</code></td><td>A:F</td><td>Open disputes per vendor, used to disqualify vendors during selection</td></tr>
+  </table>
+</div>
+
+<h2>Entity-relationship diagram</h2>
+<div id="diagram-container">
+  <div class="mermaid" id="erd-src">
+erDiagram
+  WORK_ORDERS ||--o{ RFQ_EVENTS : generates
+  RFQ_EVENTS ||--o{ RFQ_INVITES : invites
+  VENDORS ||--o{ RFQ_INVITES : selected
+  VENDORS ||--o{ DISPUTES : has
+  RFQ_INVITES ||--o{ EMAIL_LOG : dispatched_as
+  VENDORS ||--o{ EMAIL_LOG : contacted
+  EMAIL_LOG ||--o{ BIDS : yields
+  VENDORS ||--o{ BIDS : submits
+  BIDS ||--o| BID_EVALUATION : scored_as
+  BID_EVALUATION ||--o{ SHORTLIST : ranked_into
+  WORK_ORDERS ||--o{ SHORTLIST : closes_with
+
+  VENDORS {
+    string vendor_id PK
+    string vendor_name
+    string category
+    string contact_email
+    string contact_name
+    float base_price_index
+    float base_otd_rate
+    float base_quality_score
+    float base_response_rate
+    int relationship_years
+    string risk_tier
+    float financial_health_score
+    string behavioral_archetype
+  }
+  WORK_ORDERS {
+    string work_order_id PK
+    string category
+    float budget_ceiling_usd
+    date required_by_date
+    string urgency
+    string status
+  }
+  RFQ_EVENTS {
+    string rfq_id PK
+    string work_order_id FK
+    string vendor_id FK
+    datetime sent_at
+    string gmail_thread_id
+    string status
+    date deadline
+  }
+  RFQ_INVITES {
+    string rfq_id FK
+    string work_order_id FK
+    string vendor_id FK
+    string vendor_name
+    string contact_email
+    string contact_name
+    float score
+    string status
+    datetime invited_at
+  }
+  EMAIL_LOG {
+    string rfq_id FK
+    string vendor_id FK
+    datetime sent_at
+    string gmail_thread_id
+    string gmail_message_id
+    string status
+    date deadline
+  }
+  BIDS {
+    string bid_id PK
+    string rfq_id FK
+    string vendor_id FK
+    string vendor_name
+    datetime received_at
+    float bid_unit_price
+    float bid_total_usd
+    int delivery_days
+    int validity_days
+    string payment_terms
+    bool has_attachments
+    string notes
+    string gmail_message_id
+    string status
+  }
+  BID_EVALUATION {
+    string eval_id PK
+    string rfq_id FK
+    string vendor_id FK
+    string vendor_name
+    float bid_total_usd
+    int delivery_days
+    float price_score
+    float delivery_score
+    float payment_score
+    float composite_score
+    string archetype_note
+    bool selected
+    datetime evaluated_at
+  }
+  SHORTLIST {
+    string shortlist_id PK
+    string rfq_id FK
+    string work_order_id FK
+    string vendor_id FK
+    string vendor_name
+    int rank
+    float bid_total_usd
+    int delivery_days
+    float composite_score
+    string justification
+    date closed_at
+    string summary_doc_id
+  }
+  DISPUTES {
+    string dispute_id PK
+    string vendor_id FK
+    string description
+    date opened_date
+    bool resolved
+    date resolved_date
+  }
+  </div>
+</div>
+
+<h2>Schema notes / open questions for the team</h2>
+
+<div class="note">
+  <strong>Bids ↔ BidEvaluation is drawn 1-to-0/1</strong>
+  Evaluation only happens after all bids for an RFQ are in — but that's a
+  process convention enforced by the skill logic, not a real constraint in
+  the sheet. Nothing stops a bid existing without ever being evaluated.
+</div>
+
+<div class="note">
+  <strong>EmailLog and Bids aren't hard-linked by a shared key</strong>
+  The tracker skill correlates them by <code>gmail_thread_id</code> and
+  <code>vendor_id</code> at runtime, and separately does a raw subject-line
+  mailbox search to catch unsolicited bids that never appear in
+  <code>EmailLog</code> at all. If this moves onto a real relational
+  database, we'd want an explicit <code>bids.email_log_id</code> foreign key.
+</div>
+
+<div class="note">
+  <strong>RFQEvents and RFQInvites overlap heavily</strong>
+  Both are effectively per-RFQ-per-vendor rows, just written by different
+  pipeline phases. In a normalized schema these would likely collapse into
+  a single <code>rfq_invites</code> table with a status column instead of
+  two parallel tabs.
+</div>
+
+<h2>Suggested next step</h2>
+<p>If we move this off Google Sheets onto a real database (e.g. as part of
+the Joule port, backed by HANA/CAP instead of Sheets destinations), the
+three points above should be resolved first — a normalized version would
+merge <code>RFQEvents</code>/<code>RFQInvites</code>, add the missing
+<code>EmailLog</code>→<code>Bids</code> foreign key, and make the
+evaluation relationship enforceable rather than conventional.</p>
+
+<footer>
+  Generated for internal team discussion — source: Meridian RFQ Skills
+  (<code>rfq-orchestrator</code>, <code>rfq-vendor-selector</code>,
+  <code>rfq-email-composer</code>, <code>rfq-email-tracker</code>,
+  <code>rfq-bid-evaluator</code>, <code>rfq-vendor-finalizer</code>).
+</footer>
+
+</div>
+
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'default',
+    er: { fontSize: 13 }
+  });
+</script>
+</body>
+</html>

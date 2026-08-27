@@ -1,0 +1,10 @@
+dispute_id,po_id,vendor_id,dispute_date,reason,claimed_usd,resolved,resolution,month_index
+DISP-DEL-PO-RFQ-0005-V016,PO-RFQ-0005-V016,V016,2024-02-10,late_delivery,179.84,False,replacement,0
+DISP-DEL-PO-RFQ-0012-V016,PO-RFQ-0012-V016,V016,2024-03-26,late_delivery,5016.03,True,credit_note,1
+DISP-DEL-PO-RFQ-0019-V002,PO-RFQ-0019-V002,V002,2024-03-12,late_delivery,4177.05,True,credit_note,1
+DISP-DEL-PO-RFQ-0041-V007,PO-RFQ-0041-V007,V007,2024-05-22,quality_rejection,3506.07,True,credit_note,4
+DISP-DEL-PO-RFQ-0054-V006,PO-RFQ-0054-V006,V006,2024-06-19,quality_rejection,2575.42,True,rejected_claim,5
+DISP-DEL-PO-RFQ-0071-V022,PO-RFQ-0071-V022,V022,2024-09-04,late_delivery,4590.49,True,rejected_claim,7
+DISP-DEL-PO-RFQ-0162-V011,PO-RFQ-0162-V011,V011,2025-03-31,late_delivery,21418.86,True,rejected_claim,14
+DISP-DEL-PO-RFQ-0171-V010,PO-RFQ-0171-V010,V010,2025-04-21,quality_rejection,2114.4,True,penalty_deducted,15
+DISP-DEL-PO-RFQ-0191-V011,PO-RFQ-0191-V011,V011,2025-07-03,late_delivery,15170.78,True,penalty_deducted,17
