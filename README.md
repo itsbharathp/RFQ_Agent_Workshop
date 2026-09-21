@@ -62,6 +62,7 @@ Each challenge is **fully independent**. Do them in any order, skip any one, or 
 | 3 | The Watchdog | Agentic AI — Monitoring | 2 hrs | 75 min |
 | 4 | The Tactician | Agentic AI — Planning | 2.5 hrs | 90 min |
 | 6 | The Oracle | Zero-Shot Forecasting (TimesFM) | 90 min | 45 min |
+| 7 | The Front Door | System 1 Triage (Laya) | 60 min | 30 min |
 
 ---
 
@@ -163,6 +164,23 @@ Move Meridian from a reactive to a predictive posture. In this challenge, you wi
 2. **Lead Time Forecasting:** Forecast the system's cycle times before the tariff shock. Analyze the divergence between univariate statistical forecasting and exogenous causal events.
 
 **Deliverables:** `oracle.py` implementation, anomaly JSON payload, and forecast visualization charts.
+
+---
+
+### Challenge 7 — The Front Door
+
+**System 1 High-Volume Triage with Laya.**
+
+Meridian's procurement inbox is flooded with thousands of emails across multiple languages. Using a slow System 2 LLM (like Claude) for routing is too expensive and hits rate limits.
+
+In this challenge, you will deploy **Laya**, a sub-35ms System 1 reflex engine, to act as the "Front Door".
+1. **Semantic Queue Assignment:** Route complex emails to Engineering, Logistics, Finance, etc., without relying on keyword matching.
+2. **Panic Meter:** Use ordinal scoring to calculate a calibrated urgency score for each email.
+3. **Multilingual Native Routing:** Seamlessly process German and Japanese supply chain warnings in milliseconds without calling translation APIs.
+
+Filter the output to pass *only* the critical alerts to the System 2 agents.
+
+**Deliverables:** `triage.py` implementation, `critical_alerts.json` output payload.
 
 ---
 
