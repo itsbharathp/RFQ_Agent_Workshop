@@ -43,11 +43,11 @@ def init_timesfm():
     return None
 
 def task_1_commodity_forecast(tfm, prices_df):
-    """Forecast Rare Earth Elements prices and detect anomalies."""
+    """Forecast Neodymium Magnets prices and detect anomalies."""
     print("\n--- Task 1: Commodity Forecast ---")
     
-    # Filter for Rare Earth Elements
-    re_df = prices_df[prices_df['commodity_name'] == 'Rare Earth Elements'].copy()
+    # Filter for Neodymium Magnets
+    re_df = prices_df[prices_df['commodity'] == 'Neodymium Magnets'].copy()
     re_df = re_df.sort_values('date')
     
     # Split into history (Jan 2024 - Feb 2025) and actuals for testing

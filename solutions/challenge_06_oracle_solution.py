@@ -38,14 +38,14 @@ def init_timesfm():
     return tfm
 
 def task_1_commodity_forecast(tfm, prices_df):
-    """Forecast Rare Earth Elements prices and detect anomalies."""
+    """Forecast Neodymium Magnets prices and detect anomalies."""
     print("\n--- Task 1: Commodity Forecast ---")
     
-    re_df = prices_df[prices_df['commodity_name'] == 'Rare Earth Elements'].copy()
+    re_df = prices_df[prices_df['commodity'] == 'Neodymium Magnets'].copy()
     re_df = re_df.sort_values('date')
     
     # Prepare data for TimesFM (requires 'unique_id' for forecast_on_df)
-    re_df['unique_id'] = 'rare_earth'
+    re_df['unique_id'] = 'neodymium_magnets'
     
     cutoff_date = pd.to_datetime('2025-02-28')
     history_df = re_df[re_df['date'] <= cutoff_date]
@@ -56,7 +56,7 @@ def task_1_commodity_forecast(tfm, prices_df):
     forecast_df = tfm.forecast_on_df(
         inputs=history_df,
         freq="W",
-        value_name="price_per_unit",
+        value_name="price",
         num_jobs=-1
     )
     
@@ -73,11 +73,11 @@ def task_1_commodity_forecast(tfm, prices_df):
     upper_bound_col = [c for c in forecast_df.columns if 'q-0.9' in c][-1] 
     
     for _, row in comparison_df.iterrows():
-        if row['price_per_unit'] > row[upper_bound_col]:
+        if row['price'] > row[upper_bound_col]:
             alerts.append({
                 "date": row['date'].strftime('%Y-%m-%d'),
-                "commodity": "Rare Earth Elements",
-                "actual_price": float(row['price_per_unit']),
+                "commodity": "Neodymium Magnets",
+                "actual_price": float(row['price']),
                 "forecast_upper_bound": float(row[upper_bound_col]),
                 "status": "MARKET_SHOCK_DETECTED"
             })
@@ -86,14 +86,14 @@ def task_1_commodity_forecast(tfm, prices_df):
     
     # Plotting
     plt.figure(figsize=(10, 5))
-    plt.plot(history_df['date'].tail(30), history_df['price_per_unit'].tail(30), label='Historical')
-    plt.plot(comparison_df['date'], comparison_df['price_per_unit'], label='Actual', color='red', marker='x')
+    plt.plot(history_df['date'].tail(30), history_df['price'].tail(30), label='Historical')
+    plt.plot(comparison_df['date'], comparison_df['price'], label='Actual', color='red', marker='x')
     plt.plot(forecast_df['date'], forecast_df['TimesFM'], label='Forecast', color='orange', linestyle='--')
     plt.fill_between(forecast_df['date'], 
                      forecast_df[[c for c in forecast_df.columns if 'q-0.1' in c][0]], 
                      forecast_df[upper_bound_col], 
                      color='orange', alpha=0.2, label='Confidence Interval')
-    plt.title('Rare Earth Elements Price Forecast vs Actual')
+    plt.title('Neodymium Magnets Price Forecast vs Actual')
     plt.legend()
     plt.savefig('commodity_forecast.png')
     plt.close()

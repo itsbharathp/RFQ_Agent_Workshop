@@ -4,7 +4,7 @@
 This challenge introduces Google's **TimesFM**, a zero-shot foundation model for time series forecasting. Unlike traditional models that require extensive training and feature engineering (like LSTMs or ARIMA), TimesFM can take raw time series data and immediately project future values with confidence intervals based on its pre-training across billions of data points.
 
 ## Task 1: Commodity Price Anomaly Detection
-In Task 1, the goal is to forecast the price of "Rare Earth Elements" right before the major price spike in April 2025. 
+In Task 1, the goal is to forecast the price of "Neodymium Magnets" right before the major price spike in April 2025. 
 
 ### Why this matters
 Meridian's previous agents (The Watchdog and The Tactician) reacted *after* the prices spiked. An Oracle agent anticipates the spike. 

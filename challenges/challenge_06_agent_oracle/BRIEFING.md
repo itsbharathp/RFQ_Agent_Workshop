@@ -16,7 +16,7 @@ Google's **TimesFM** is a Time Series Foundation Model. It performs *zero-shot* 
 
 ### Task 1: Commodity Price Forecasting & Anomaly Detection
 1. **Load Data:** Read `03_commodity_prices.csv`.
-2. **Filter:** Extract the weekly prices of "Rare Earth Elements" from Jan 2024 to Feb 2025.
+2. **Filter:** Extract the weekly prices of "Neodymium Magnets" from Jan 2024 to Feb 2025.
 3. **Forecast:** Feed this historical context into TimesFM to forecast the next 12 weeks.
 4. **Detect Anomalies:** TimesFM outputs confidence intervals (e.g., 80%, 95%). Write logic to compare the *actual* incoming April 2025 prices against the upper bound of the forecast. When the actual price breaches the 95% confidence interval, trigger a "Market Shock Alert".
 
