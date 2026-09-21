@@ -104,11 +104,11 @@
  
  ---
  
- ## 🙏 Credits
- 
- **Laya** was created and open-sourced by **Nandakishor Mukkunnoth**, Founder & CEO of **ConvAI Innovations**. 
- 
- By formalizing the framework for schema-based decisions guided by reinforcement learning (RLCD), Laya provides a breakthrough 100% open-source alternative for high-volume enterprise classification and routing.
- 
- Learn more, read the research, and access the open weights at the official site:  
- **[Laya - ConvAI Innovations](https://laya.convaiinnovations.com/)**
+## 🙏 Credits & Acknowledgements
+
+**Laya** was created by **Nandakishor Mukkunnoth**, Founder & CEO of **ConvAI Innovations**. 
+
+Laya represents a breakthrough in non-autoregressive decision models utilizing reinforcement learning, designed to offer an incredibly fast, highly accurate, open-weights (Apache 2.0) alternative to expensive generative LLM triage workflows.
+
+For more information, research papers, and access to the Laya model hub, visit the official page:  
+**[Laya - ConvAI Innovations](https://laya.convaiinnovations.com/)**
