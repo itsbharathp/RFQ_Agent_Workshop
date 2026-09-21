@@ -1,0 +1,51 @@
+[
+  {
+    "id": "MSG-001",
+    "vendor_id": "V005",
+    "sender": "finance@omega-robotics.com",
+    "subject": "URGENT: Account Placed on Credit Hold",
+    "body": "Meridian Team, your outstanding balance of $85,000 is now 60 days past due. We have placed a hard credit hold on your account. All shipments are halted immediately until payment is remitted."
+  },
+  {
+    "id": "MSG-002",
+    "vendor_id": "V012",
+    "sender": "logistics@global-freight.com",
+    "subject": "Routine update: Container arriving Port of Long Beach",
+    "body": "Hello, this is an automated notification. Container C-88992 is scheduled to dock on Tuesday the 14th. Customs clearance expected within 48 hours."
+  },
+  {
+    "id": "MSG-003",
+    "vendor_id": "V002",
+    "sender": "h.muller@stuttgart-cnc.de",
+    "subject": "Verzögerung bei der Lieferung wegen Materialmangel",
+    "body": "Hallo Meridian-Team, leider müssen wir Ihnen mitteilen, dass sich die Lieferung der Spindelmotoren um drei Wochen verzögern wird. Wir haben derzeit massive Probleme bei der Beschaffung der Seltenen Erden. Bitte passen Sie Ihre Produktionspläne an."
+  },
+  {
+    "id": "MSG-004",
+    "vendor_id": "UNKNOWN",
+    "sender": "sales@seo-marketing-blast.com",
+    "subject": "Boost your Google Rankings today!!!",
+    "body": "Are you tired of competitors stealing your leads? Our new SEO package guarantees page 1 results on Google! Click here to claim your 50% discount!"
+  },
+  {
+    "id": "MSG-005",
+    "vendor_id": "V008",
+    "sender": "engineering@titanium-forgings.com",
+    "subject": "Clarification needed: RFQ #11094 tolerances",
+    "body": "Hi, reviewing the blueprints for RFQ #11094. The thermal expansion coefficient on layer 4 contradicts the strict 0.001mm jitter requirement. Can someone from the technical team review and advise before we submit our bid?"
+  },
+  {
+    "id": "MSG-006",
+    "vendor_id": "V015",
+    "sender": "k.tanaka@tokyo-servos.jp",
+    "subject": "関税に関する重要なお知らせ (Important Notice Regarding Tariffs)",
+    "body": "メリディアンチームの皆様、今週発表された新しい関税措置により、現在の見積もり価格を維持することができなくなりました。すべての注文に対して15％の追加料金が発生します。大変申し訳ありませんが、ご理解のほどよろしくお願いいたします。"
+  },
+  {
+    "id": "MSG-007",
+    "vendor_id": "V003",
+    "sender": "legal@horizon-alloys.com",
+    "subject": "Confidential: Q3 Consolidation Review",
+    "body": "To whom it may concern. Horizon Alloys is conducting a strategic review of our vendor partnerships for Q3. Due to excessive clarification rounds and long cycle times, Meridian has been flagged as a high-risk client. We need a meeting this week to discuss if we can continue our partnership."
+  }
+]
