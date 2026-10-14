@@ -82,7 +82,94 @@ The volume matters. Over 4,000 email threads and 4,400 log events is more than a
 
 ## Part II — The Diagnosis
 
-Before you build anything, you have to *understand*. Two challenges, no API key required, pure analysis.
+Before you build anything, you have to *understand*. Two challenges, no API key required, pure analysis. But before either one, a prior question: **why did the crisis persist and accelerate** instead of self-correcting? For that you need to see the *structure* — the feedback loops and the accumulations — not just the monthly numbers. Chapter 0 draws the system; Chapters 1 and 2 then put a bottleneck and a dollar figure on it.
+
+### Chapter 0 — The Shape of the Crisis (System Dynamics)
+
+A monthly table tells you *what* changed. It does not tell you *why the change fed on itself.* Meridian's crisis was not a one-time hit that the system absorbed — it was a **vicious circle** that a tariff shock kicked into motion and that then ran under its own power. Two systems-thinking lenses make that visible: a **Causal Loop Diagram** (the feedback structure) and a **Stock & Flow** map (where things pile up and drain).
+
+#### Lens 1 — Causal Loop Diagram: *why it persisted*
+
+```mermaid
+graph LR
+  TAR[Sep-2024 tariff shock]
+  COST[Material cost pressure]
+  CASH[Meridian cash-flow stress]
+  LATE[Late payments to vendors]
+  HEALTH[Vendor health score]
+  RESP[Vendor response / bid rate]
+  POOL[Competitive bidding pool per RFQ]
+  PRICE[Winning purchase price]
+  MARGIN[Throughput margin]
+  CLAR[Clarification rounds / admin burden]
+
+  TAR -->|+| COST
+  COST -->|+| CASH
+  CASH -->|+| LATE
+  LATE -->|-| HEALTH
+  HEALTH -->|+| RESP
+  RESP -->|+| POOL
+  POOL -->|-| PRICE
+  PRICE -->|+| COST
+  POOL -->|+| MARGIN
+  MARGIN -->|-| CASH
+  HEALTH -->|-| CLAR
+  CLAR -->|-| RESP
+```
+
+Signed edges: `+` = both move the same way, `-` = they move opposite. To classify a loop, **count the minus signs — even → reinforcing (R, a vicious or virtuous circle), odd → balancing (B, self-correcting).**
+
+- **R1 — The margin death spiral (the dominant loop).** `CASH → + LATE → − HEALTH → + RESP → + POOL → + MARGIN → − CASH`. Two minus signs → **reinforcing**. Cash stress makes Meridian pay late; late payment erodes vendor health; unhealthy vendors stop bidding; a thin pool loses price competition; margin falls; falling margin *deepens* cash stress. This is the loop that turned a one-month tariff into a ten-month decline. The data signature is unmistakable: bids/RFQ **6.40 → 4.50 (−30%)**, T-margin **20.0% → 16.4%**.
+- **R2 — The price-cost ratchet.** `POOL → − PRICE → + COST → + CASH → + LATE → − HEALTH → + RESP → + POOL`. Four minus signs → **reinforcing**. A thin pool raises the winning price, which *is* material cost, which feeds the same cash stress that thinned the pool. The tariff didn't need to stay elevated; the pool shrinkage kept prices high on its own.
+- **B1 — Admin firefighting (a weak balancer).** `HEALTH → − CLAR → − RESP → + POOL → + MARGIN → − CASH → + LATE → − HEALTH`. Three minus signs → **balancing**, but it balances the *wrong way*: as health drops, clarification rounds rise (specs get queried, bids get chased), which further *suppresses* response. What should relieve the system instead loads it. Admin burden isn't the disease; it's the fever. (Note the data: clarification rounds barely move, 3.37 → 3.62 — the team worked harder per round, which is why they felt exhausted while the metric looked flat.)
+- **B2 — The response-rate governor (too slow to help).** `HEALTH → + RESP → + POOL → + MARGIN → − CASH → + LATE → − HEALTH`. One minus sign → **balancing**: in principle, if health recovers, response recovers and the loop damps. It exists — late 2024's partial recovery rides it — but it is **out-run by R1/R2** because of delay.
+
+**The delays are the whole story.** Health scores are a `trend_3mo` — they lag the payment behaviour that drives them by months. By the time health visibly dropped (trough 85.6 at month 10) and alerts fired (4 → **28**), the late payments causing it were a quarter old. Vicious reinforcing loops (R1, R2) act *fast*; the corrective balancing loop (B2) acts *slow*. A fast vicious loop plus a slow corrective loop is the textbook recipe for a system that overshoots and stays down.
+
+**Leverage points, ranked (Meadows-style):**
+
+1. **Break the `LATE → − HEALTH` edge (highest leverage).** Paying on time — or signalling payment reliability — severs R1 and R2 at their root. This is a *structural* change to loop gain and costs nothing. It is exactly the Chapter 1 "zero-budget exploitation" move, now shown to be the single highest-leverage intervention in the entire structure.
+2. **Shorten the health-information delay.** A monitoring agent that detects the decline from *payment* signals (the cause) rather than waiting for the 3-month health trend (the lagged effect) lets B2 act before R1 wins. **This is precisely the Watchdog (Chapter 3).**
+3. **Add an external information inflow TimesFM/market signals.** Seeing the *next* shock (April 2025 rare-earth) before it hits lets you pre-empt the cost spike that would restart R2. **This is the Oracle (Chapter 5).**
+4. **Weaken `HEALTH → − CLAR` (lowest leverage).** Tightening the clarification loop helps B1 stop fighting itself, but it's a symptom-level fix.
+
+> **Systemic insight:** the crisis persisted because the two reinforcing loops (margin spiral, price ratchet) are fast and the only real balancing loop is slow and lagged. You do not fix this by working harder inside the loops (more invites, more chasing) — that's running on the treadmill the loops define. You fix it by *changing the structure*: cut the late-payment edge, and shorten the information delay so the system can see the decline while it's still cheap to reverse.
+
+#### Lens 2 — Stock & Flow: *where it piled up*
+
+Loops explain the dynamics; stocks explain the *inertia*. A stock is a bathtub — it can only change through its flows (taps and drains), so the question that matters for any solution is **"which flow rate does it move?"**
+
+```mermaid
+flowchart LR
+  subgraph FLOWS
+    direction LR
+    pay_in((pay on time)) -->|drains| HQ
+    pay_late((pay late)) -->|fills| STRESS
+    heal((relationship repair)) -->|fills| HQ
+    decay((health decay)) -->|drains| HQ
+    HQ[["STOCK: Healthy / willing<br/>vendors (≥80 health)"]]
+    STRESS[["STOCK: Cash-flow stress<br/>(unpaid-days backlog)"]]
+    MARGIN[["STOCK: Accumulated<br/>throughput ($)"]]
+  end
+  HQ -->|high pool → competition| win((bids won cheap))
+  win -->|fills| MARGIN
+  thin((thin-pool price premium)) -->|drains| MARGIN
+```
+
+| Stock | Inflow(s) | Outflow(s) | Units | What the data shows |
+|---|---|---|---|---|
+| **Healthy / willing vendor pool** | relationship repair; on-time payment | health decay (driven by late payment) | count of vendors ≥80 health | 21 (m5) → **17 (m10)** → 20 (m17): the pool drained at the trough and only partly refilled |
+| **Cash-flow stress** | late / disputed payments | margin recovery; new revenue | unpaid-day backlog (stress index) | stress index peaks **0.05 at month 10** — same month the vendor pool bottoms |
+| **Accumulated throughput** | cheap competitive wins | thin-pool price premium | $ | the drain opened: **≈ $289K** of throughput bled out over 10 months |
+
+**Which flow rates does each solution move?** This is the test of whether an intervention is real or cosmetic:
+
+- **Pay-on-time (exploitation move)** turns *off* the `health decay` drain on the vendor-pool stock — it stops the bathtub emptying. Highest-leverage because the vendor-pool stock is the one feeding the margin stock.
+- **The Watchdog (Ch. 3)** doesn't change a flow directly — it *shortens the detection delay* on the decay drain, so a human can open the "repair" inflow before the stock empties.
+- **The Oracle (Ch. 5)** adds an inflow of *information* that lets the Tactician pre-buy, blunting the `thin-pool price premium` drain on the margin stock when the next shock lands.
+- **More invitations (the thing Meridian actually did)** moves *no* flow on any of these stocks — the invite count was never the tap. That's the structural proof of why effort inside the loop didn't help.
+
+With the structure drawn, the two diagnosis challenges now have precise jobs: **Chapter 1** finds which stock is the binding constraint (the vendor pool), and **Chapter 2** measures how fast the margin stock drained (the $289K).
 
 ### Chapter 1 — Find the Bottleneck (Theory of Constraints)
 
