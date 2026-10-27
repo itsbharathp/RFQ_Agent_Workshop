@@ -73,7 +73,7 @@ A common mistake is to look at the most *visible* pain point. The constraint is 
 1. **Three charts** — each answering one question about the system (see `starter.py`)
 2. **A constraint statement** — one sentence naming the constraint
 3. **Two sentences of evidence** — what in the data proves it
-4. **One exploitation proposal** — what Hermes/the procurement team could do *immediately* (without extra budget) to get more throughput from the constraint
+4. **One exploitation proposal** — what the procurement team could do *immediately* (without extra budget) to get more throughput from the constraint
 
 ---
 
@@ -81,7 +81,7 @@ A common mistake is to look at the most *visible* pain point. The constraint is 
 
 The generator comment says:
 
-> "Sep 2024 tariff shock → Meridian cash flow stress → late payments → vendor health scores drop → response rates fall → RFQ pool shrinks → Hermes has to work harder → **constraint becomes visible**"
+> "Sep 2024 tariff shock → Meridian cash flow stress → late payments → vendor health scores drop → response rates fall → RFQ pool shrinks → Procurement Team has to work harder → **constraint becomes visible**"
 
 Map that chain in the data. Where does it break down? What's the chokepoint?
 

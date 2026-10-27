@@ -173,7 +173,7 @@ CAUSAL CHAIN: [Write the chain: Cause → Effect → Effect → Constraint]
 
 def propose_exploitation() -> str:
     """
-    TODO: What could Meridian (or Hermes) do RIGHT NOW — with no new budget —
+    TODO: What could Meridian Team do RIGHT NOW — with no new budget —
     to get more throughput from the constrained resource?
 
     Think about:
