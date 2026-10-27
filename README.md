@@ -41,14 +41,6 @@ RFQ_Agent_Workshop/
 pip install pandas matplotlib anthropic
 ```
 
-**Challenges 3 and 4 require an Anthropic API key:**
-
-```bash
-export ANTHROPIC_API_KEY="your-key-here"
-```
-
-Challenges 1 and 2 are fully standalone — no API key needed.
-
 ---
 
 ## The Four Challenges
